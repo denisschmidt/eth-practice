@@ -2,6 +2,42 @@
 - node: 16.13.1
 - npm: 8.1.2
 
+# What's a Wei?
+
+A wei is the smallest sub-unit of Ether — there are 10^18 wei in one ether.
+
+
+# Using indexed
+
+In order to filter events and only listen for changes related to the current user, Solidity contract would have to use the indexed keyword, like we did in the Transfer event of our ERC721 implementation:
+
+```event Transfer(address indexed _from, address indexed _to, uint256 _tokenId);```
+
+
+```
+// Use `filter` to only fire this code when `_to` equals `userAccount`
+cryptoZombies.events.Transfer({ filter: { _to: userAccount } })
+    .on("data", function(event) {
+        let data = event.returnValues;
+        // The current user just received a zombie!
+        // Do something here to update the UI to show it
+    })
+    .on("error", console.error);
+```
+
+# Querying past events
+
+We can even query past events using getPastEvents, and use the filters fromBlock and toBlock to give Solidity a time range for the event logs ("block" in this case referring to the Ethereum block number):
+
+```
+cryptoZombies.getPastEvents("NewZombie", { fromBlock: 0, toBlock: "latest" })
+    .then(function(events) {
+    // `events` is an array of `event` objects that we can iterate, like we did above
+    // This code will get us a list of every zombie that was ever created
+    });
+```
+
+
 # Advanced Sample Hardhat Project
 
 This project demonstrates an advanced Hardhat use case, integrating other tools commonly used alongside Hardhat in the ecosystem.
